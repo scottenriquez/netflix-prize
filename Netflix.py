@@ -2,12 +2,10 @@
 # netflix_make_cache
 # ------------
 
-def netflix_make_cache (cache, fileName) :
+def netflix_make_cache (cache, fileObject) :
     """
     
     """    
-    fileObject = open(fileName)
-    num = 0
     for line in fileObject: 
         line = line.strip()
         (i, j) = line.split(" ")
@@ -17,20 +15,20 @@ def netflix_make_cache (cache, fileName) :
 # netflix_read
 # ------------
 
-def netflix_read (fileName) :
+def netflix_read (fileObject) :
     """
     fileName is the path to probe.txt
     """    
-    fileObject = open(fileName)
     lines = [line.strip() for line in fileObject]
     fileObject.close()
     return lines
 
-# -------------
-# netflix_parse
-# -------------
+# -----------------------
+# netflix_estimate_rating
+# -----------------------
 
-def netflix_parse (lines, userRatingCache, movieRatingCache) :
+def netflix_estimate_rating (lines, userRatingCache, movieRatingCache) :
+    
     currentMovieID = 0
     for line in lines :
         if(line[len(line) - 1] == ":") :
@@ -39,9 +37,16 @@ def netflix_parse (lines, userRatingCache, movieRatingCache) :
             currentUserID = int(line)
             netflix_solve(currentMovieID, currentUserID, userRatingCache, movieRatingCache)
 
-# -------------
-# netflix_solve
-# -------------
+# ------------------
+# netflix_cache_read
+# ------------------
 
-def netflix_solve (currentMovieID, currentUserID, userRatingCache, movieRatingCache) :
-    1 + 1
+def netflix_cache_read (currentUserID, currentMovieID, userRatingCache, movieRatingCache) :
+    averageUserRating = userRatingCache[currentUserID]
+    averageMovieRating = movieRatingCache[currentMovieID]
+    #if a rating is not found in the cache, guess 2.5 stars
+    if(averageUserRating < 1):
+        averageUserRating = 2.5
+    if(averageMovieRating < 1):
+        averageMovieRating = 2.5
+    return (averageUserRating + averageMovieRating) / 2.0
