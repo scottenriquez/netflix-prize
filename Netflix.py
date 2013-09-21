@@ -1,4 +1,19 @@
 # ------------
+# netflix_make_cache
+# ------------
+
+def netflix_make_cache (cache, fileName) :
+    """
+    
+    """    
+    fileObject = open(fileName)
+    num = 0
+    for line in fileObject: 
+        line = line.strip()
+        (i, j) = line.split(" ")
+        cache[int(i)] = float(j)
+
+# ------------
 # netflix_read
 # ------------
 
@@ -29,4 +44,4 @@ def netflix_parse (lines, userRatingCache, movieRatingCache) :
 # -------------
 
 def netflix_solve (currentMovieID, currentUserID, userRatingCache, movieRatingCache) :
-    print("nothing")
+    1 + 1
