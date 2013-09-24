@@ -14,7 +14,7 @@ To test the program:
 import StringIO
 import unittest
 
-from Netflix import netflix_read, netflix_make_cache, netflix_estimate_rating, netflix_cache_read
+from Netflix import netflix_read, netflix_make_cache, netflix_compute_RMSE, netflix_estimate_rating 
 
 # -----------
 # TestNetflix

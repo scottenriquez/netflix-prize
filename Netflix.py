@@ -17,7 +17,7 @@ def netflix_make_cache (cache, fileObject) :
 
 def netflix_read (fileObject) :
     """
-    fileName is the path to probe.txt
+    fileObject is the probe.txt file
     """    
     lines = [line.strip() for line in fileObject]
     fileObject.close()
@@ -27,26 +27,31 @@ def netflix_read (fileObject) :
 # netflix_estimate_rating
 # -----------------------
 
-def netflix_estimate_rating (lines, userRatingCache, movieRatingCache) :
-    
+def netflix_compute_RMSE (probeLines, actualLines, userRatingCache, movieRatingCache) :
+    """
+    summation of the difference between our estimate and the actual ratings
+    writes our estimates to output file
+    """
     currentMovieID = 0
-    for line in lines :
-        if(line[len(line) - 1] == ":") :
-            currentMovieID = int(line[0 : len(line) - 1])
+    actualLinesIndex = 0
+    sumRMSE = 0.0
+    totalRatings = 0
+    for probeLine in probeLines :
+        if(probeLine[len(probeLine) - 1] == ":") :
+            #ensuring that the probe and actual rating files are of the same format
+            assert actualLines[actualLinesIndex][len(probeLine) - 1] == ":"
+            currentMovieID = int(probeLine[0 : len(probeLine) - 1])
         else :
-            currentUserID = int(line)
-            netflix_solve(currentMovieID, currentUserID, userRatingCache, movieRatingCache)
+            currentUserID = int(probeLine)
+            estimate = netflix_estimate_rating(currentUserID, currentMovieID, userRatingCache, movieRatingCache)
+            sumRMSE += (estimate - float(actualLines[actualLinesIndex])) ** 2
+            totalRatings += 1
+        actualLinesIndex += 1
+    return (sumRMSE / totalRatings) ** 0.5
 
 # ------------------
 # netflix_cache_read
 # ------------------
 
-def netflix_cache_read (currentUserID, currentMovieID, userRatingCache, movieRatingCache) :
-    averageUserRating = userRatingCache[currentUserID]
-    averageMovieRating = movieRatingCache[currentMovieID]
-    #if a rating is not found in the cache, guess 2.5 stars
-    if(averageUserRating < 1):
-        averageUserRating = 2.5
-    if(averageMovieRating < 1):
-        averageMovieRating = 2.5
-    return (averageUserRating + averageMovieRating) / 2.0
+def netflix_estimate_rating (currentUserID, currentMovieID, userRatingCache, movieRatingCache) :
+    return (userRatingCache[currentUserID] + movieRatingCache[currentMovieID]) / 2.0
