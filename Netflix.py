@@ -41,11 +41,13 @@ def netflix_compute_RMSE (probeLines, actualLines, userRatingCache, movieRatingC
             #ensuring that the probe and actual rating files are of the same format
             assert actualLines[actualLinesIndex][len(probeLine) - 1] == ":"
             currentMovieID = int(probeLine[0 : len(probeLine) - 1])
+            #print (probeLine)
         else :
             currentUserID = int(probeLine)
             estimate = netflix_estimate_rating(currentUserID, currentMovieID, userRatingCache, movieRatingCache)
             sumRMSE += (estimate - float(actualLines[actualLinesIndex])) ** 2
             totalRatings += 1
+            #print (str(estimate))
         actualLinesIndex += 1
     return (sumRMSE / totalRatings) ** 0.5
 
@@ -54,4 +56,8 @@ def netflix_compute_RMSE (probeLines, actualLines, userRatingCache, movieRatingC
 # ------------------
 
 def netflix_estimate_rating (currentUserID, currentMovieID, userRatingCache, movieRatingCache) :
-    return (userRatingCache[currentUserID] + movieRatingCache[currentMovieID]) / 2.0
+    """
+    overall average rating + user offset + movie offset
+    """    
+    overallAverage = 3.7
+    return overallAverage + (userRatingCache[currentUserID] - overallAverage) + (movieRatingCache[currentMovieID] - overallAverage)
