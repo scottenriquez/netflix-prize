@@ -4,12 +4,15 @@
 
 def netflix_make_cache (cache, fileObject) :
     """
-    
+    cache is a pointer to the list to build the cache in
+    fileObject is the input cache file
     """    
     for line in fileObject: 
         line = line.strip()
-        (i, j) = line.split(" ")
-        cache[int(i)] = float(j)
+        (itemID, rating) = line.split(" ")
+        assert float(rating) >= 1.0 and float(rating) <= 5.0
+        cache[int(itemID)] = float(rating)
+    fileObject.close()
 
 # ------------
 # netflix_read
@@ -17,7 +20,7 @@ def netflix_make_cache (cache, fileObject) :
 
 def netflix_read (fileObject) :
     """
-    fileObject is the probe.txt file
+    fileObject is for the probe input
     """    
     lines = [line.strip() for line in fileObject]
     fileObject.close()
@@ -37,17 +40,19 @@ def netflix_compute_RMSE (probeLines, actualLines, userRatingCache, movieRatingC
     sumRMSE = 0.0
     totalRatings = 0
     for probeLine in probeLines :
+        #if line containing a movie ID number
         if(probeLine[len(probeLine) - 1] == ":") :
-            #ensuring that the probe and actual rating files are of the same format
+            #make sure the probe and actual rating files are of the same format
             assert actualLines[actualLinesIndex][len(probeLine) - 1] == ":"
             currentMovieID = int(probeLine[0 : len(probeLine) - 1])
-            #print (probeLine)
+            print (probeLine)
         else :
             currentUserID = int(probeLine)
             estimate = netflix_estimate_rating(currentUserID, currentMovieID, userRatingCache, movieRatingCache)
+            assert estimate >= 1.0 and estimate <= 5.0
             sumRMSE += (estimate - float(actualLines[actualLinesIndex])) ** 2
             totalRatings += 1
-            #print (str(estimate))
+            print (str(estimate))
         actualLinesIndex += 1
     return (sumRMSE / totalRatings) ** 0.5
 
@@ -59,5 +64,10 @@ def netflix_estimate_rating (currentUserID, currentMovieID, userRatingCache, mov
     """
     overall average rating + user offset + movie offset
     """    
-    overallAverage = 3.7
-    return overallAverage + (userRatingCache[currentUserID] - overallAverage) + (movieRatingCache[currentMovieID] - overallAverage)
+    overallAverage = 3.6233
+    estimate = overallAverage + (userRatingCache[currentUserID] - overallAverage) + (movieRatingCache[currentMovieID] - overallAverage)
+    if (estimate < 1.0):
+        estimate = 1.0
+    if (estimate > 5.0):
+        estimate = 5.0
+    return estimate
