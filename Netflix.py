@@ -1,6 +1,6 @@
-# ------------
+# ------------------
 # netflix_make_cache
-# ------------
+# ------------------
 
 def netflix_make_cache (cache, fileObject) :
     """
@@ -14,11 +14,11 @@ def netflix_make_cache (cache, fileObject) :
         cache[int(itemID)] = float(rating)
     fileObject.close()
 
-# ------------
-# netflix_read
-# ------------
+# ------------------
+# netflix_read_probe
+# ------------------
 
-def netflix_read (fileObject) :
+def netflix_read_probe (fileObject) :
     """
     fileObject is for the probe input
     """    
@@ -26,34 +26,56 @@ def netflix_read (fileObject) :
     fileObject.close()
     return lines
 
+# -------------------
+# netflix_read_actual
+# -------------------
+
+def netflix_read_actual (fileObject) :
+    """
+    fileObject is for the actual scores
+    acutalRatings is a list of dictionaries
+    """
+    actualRatings = [None] * 17771
+    userMap = {}
+    currentMovieID = 0
+    for line in fileObject :
+        line = line.strip()
+        if (line[len(line) - 1] == ":") :
+            actualRatings[currentMovieID] = userMap
+            userMap = {}
+            currentMovieID = int(line[0 : len(line) - 1])
+        else :
+            (userID, rating) = line.split()
+            userMap[int(userID)] = float(rating)
+    actualRatings[currentMovieID] = userMap
+    fileObject.close()
+    return actualRatings
+
 # -----------------------
 # netflix_estimate_rating
 # -----------------------
 
-def netflix_compute_RMSE (probeLines, actualLines, userRatingCache, movieRatingCache) :
+def netflix_compute_RMSE (probeLines, actualRatings, userRatingCache, movieRatingCache) :
     """
     summation of the difference between our estimate and the actual ratings
     writes our estimates to output file
     """
     currentMovieID = 0
-    actualLinesIndex = 0
     sumRMSE = 0.0
     totalRatings = 0
     for probeLine in probeLines :
         #if line containing a movie ID number
         if (probeLine[len(probeLine) - 1] == ":") :
             #make sure the probe and actual rating files are of the same format
-            assert actualLines[actualLinesIndex][len(probeLine) - 1] == ":"
             currentMovieID = int(probeLine[0 : len(probeLine) - 1])
             #print (probeLine)
         else :
             currentUserID = int(probeLine)
             estimate = netflix_estimate_rating(currentUserID, currentMovieID, userRatingCache, movieRatingCache)
             assert estimate >= 1.0 and estimate <= 5.0
-            sumRMSE += (estimate - float(actualLines[actualLinesIndex])) ** 2
+            sumRMSE += (estimate - actualRatings[currentMovieID][currentUserID]) ** 2
             totalRatings += 1
             #print (str(estimate))
-        actualLinesIndex += 1
     return (sumRMSE / totalRatings) ** 0.5
 
 # ------------------
