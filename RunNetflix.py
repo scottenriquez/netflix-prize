@@ -23,8 +23,6 @@ netflix_make_cache(userRatingCache, open(sys.argv[1], "r"))
 netflix_make_cache(movieRatingCache, open(sys.argv[2], "r"))
 actualRatingLines = netflix_read(open(sys.argv[3], "r"))
 #read probe from system in
-#probeLines = netflix_read(sys.stdin)
-#read Downing's probe.txt
-probeLines = netflix_read(open("/u/downing/cs/netflix/probe.txt", "r"))
+probeLines = netflix_read(sys.stdin)
 #final lines of standard out
 print ("RMSE: " + str(netflix_compute_RMSE(probeLines, actualRatingLines, userRatingCache, movieRatingCache)))
