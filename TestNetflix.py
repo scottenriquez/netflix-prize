@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 
-"""
-To test the program:
-% python TestNetflix.py > TestNetflix.out
-% chmod ugo+x TestNetflix.py
-% TestNetflix.py > TestNetflix.out
-"""
-
 # -------
 # imports
 # -------

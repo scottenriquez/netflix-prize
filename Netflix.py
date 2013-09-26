@@ -6,6 +6,7 @@ def netflix_make_cache (cache, fileObject) :
     """
     cache is a pointer to the list to build the cache in
     fileObject is the input cache file
+    returns parsed list
     """    
     for line in fileObject: 
         line = line.strip()
@@ -22,6 +23,7 @@ def netflix_make_cache (cache, fileObject) :
 def netflix_read_probe (fileObject) :
     """
     fileObject is for the probe input
+    returns parsed list
     """    
     lines = [line.strip() for line in fileObject]
     fileObject.close()
@@ -61,7 +63,8 @@ def netflix_read_actual (actualRatings, fileObject) :
 def netflix_compute_RMSE (probeLines, actualRatings, userRatingCache, movieRatingCache) :
     """
     summation of the difference between our estimate and the actual ratings
-    writes our estimates to output file
+    writes estimates to output file
+    returns RMSE
     """
     currentMovieID = 0
     sumRMSE = 0.0
@@ -89,6 +92,7 @@ def netflix_compute_RMSE (probeLines, actualRatings, userRatingCache, movieRatin
 def netflix_estimate_rating (currentUserID, currentMovieID, userRatingCache, movieRatingCache) :
     """
     overall average rating + user offset + movie offset
+    returns estimate
     """
     #tested average    
     overallAverage = 3.6233
