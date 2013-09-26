@@ -10,6 +10,7 @@ def netflix_make_cache (cache, fileObject) :
     for line in fileObject: 
         line = line.strip()
         (itemID, rating) = line.split(" ")
+        assert int(itemID) >= 1 and int(itemID) <= 2649429
         assert float(rating) >= 1.0 and float(rating) <= 5.0
         cache[int(itemID)] = float(rating)
     fileObject.close()
@@ -33,7 +34,7 @@ def netflix_read_probe (fileObject) :
 def netflix_read_actual (fileObject) :
     """
     fileObject is for the actual scores
-    acutalRatings is a list of dictionaries
+    acutalRatings is a list of dictionaries of type [int(movieID)][dict(userID -> userRating)]
     """
     actualRatings = [None] * 17771
     userMap = {}
@@ -44,8 +45,11 @@ def netflix_read_actual (fileObject) :
             actualRatings[currentMovieID] = userMap
             userMap = {}
             currentMovieID = int(line[0 : len(line) - 1])
+            assert currentMovieID >= 1 and currentMovieID <= 17770
         else :
             (userID, rating) = line.split()
+            assert int(userID) >= 1 and int(userID) <= 2649429
+            assert float(rating) >= 1.0 and float(rating) <= 5.0
             userMap[int(userID)] = float(rating)
     actualRatings[currentMovieID] = userMap
     fileObject.close()
@@ -64,11 +68,13 @@ def netflix_compute_RMSE (probeLines, actualRatings, userRatingCache, movieRatin
     sumRMSE = 0.0
     totalRatings = 0
     for probeLine in probeLines :
-        #if line containing a movie ID number
+        #if line containing a movie ID
         if (probeLine[len(probeLine) - 1] == ":") :
             currentMovieID = int(probeLine[0 : len(probeLine) - 1])
+            assert currentMovieID >= 1 and currentMovieID <= 17770
             print (probeLine)
         else :
+            #if line containing a customer ID
             currentUserID = int(probeLine)
             estimate = netflix_estimate_rating(currentUserID, currentMovieID, userRatingCache, movieRatingCache)
             assert estimate >= 1.0 and estimate <= 5.0
@@ -84,9 +90,13 @@ def netflix_compute_RMSE (probeLines, actualRatings, userRatingCache, movieRatin
 def netflix_estimate_rating (currentUserID, currentMovieID, userRatingCache, movieRatingCache) :
     """
     overall average rating + user offset + movie offset
-    """    
+    """
+    #tested average    
     overallAverage = 3.6233
+    assert userRatingCache[currentUserID] >= 1.0 and userRatingCache[currentUserID] <= 5.0
+    assert movieRatingCache[currentMovieID] >= 1.0 and movieRatingCache[currentMovieID] <= 5.0
     estimate = overallAverage + (userRatingCache[currentUserID] - overallAverage) + (movieRatingCache[currentMovieID] - overallAverage)
+    #enforce cap
     if (estimate < 1.0) :
         estimate = 1.0
     if (estimate > 5.0) :
