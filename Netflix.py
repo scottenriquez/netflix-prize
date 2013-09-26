@@ -31,12 +31,11 @@ def netflix_read_probe (fileObject) :
 # netflix_read_actual
 # -------------------
 
-def netflix_read_actual (fileObject) :
+def netflix_read_actual (actualRatings, fileObject) :
     """
     fileObject is for the actual scores
     acutalRatings is a list of dictionaries of type [int(movieID)][dict(userID -> userRating)]
     """
-    actualRatings = [None] * 17771
     userMap = {}
     currentMovieID = 0
     for line in fileObject :
@@ -55,9 +54,9 @@ def netflix_read_actual (fileObject) :
     fileObject.close()
     return actualRatings
 
-# -----------------------
-# netflix_estimate_rating
-# -----------------------
+# --------------------
+# netflix_compute_RMSE
+# --------------------
 
 def netflix_compute_RMSE (probeLines, actualRatings, userRatingCache, movieRatingCache) :
     """
@@ -83,9 +82,9 @@ def netflix_compute_RMSE (probeLines, actualRatings, userRatingCache, movieRatin
             print (str(estimate))
     return (sumRMSE / totalRatings) ** 0.5
 
-# ------------------
-# netflix_cache_read
-# ------------------
+# -----------------------
+# netflix_estimate_rating
+# -----------------------
 
 def netflix_estimate_rating (currentUserID, currentMovieID, userRatingCache, movieRatingCache) :
     """
