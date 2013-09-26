@@ -137,18 +137,18 @@ class TestNetflix (unittest.TestCase) :
         expected = 4.3767
         self.assert_(str(estimate) == str(expected))
 
-    def test_estimate_rating (self) :
+    def test_estimate_rating_2 (self) :
         userRatingCache = [-1, 2.0, 4.5, 5.0]
         movieRatingCache = [-1, 3.0, 4.0, 4.5]
-        estimate = netflix_estimate_rating (3, 2, userRatingCache, movieRatingCache)       
-        expected = 4.3767
+        estimate = netflix_estimate_rating (3, 2, userRatingCache, movieRatingCache)  
+        expected = 5.0
         self.assert_(str(estimate) == str(expected))
     
     #test upper bound
-    def test_estimate_rating (self) :
+    def test_estimate_rating_3 (self) :
         userRatingCache = [-1, 5.0, 4.0, 3.0]
         movieRatingCache = [-1, 3.0, 4.0, 5.0]
-        estimate = netflix_estimate_rating (1, 3, userRatingCache, movieRatingCache)       
+        estimate = netflix_estimate_rating (1, 3, userRatingCache, movieRatingCache)   
         expected = 5.0
         self.assert_(str(estimate) == str(expected))
 
