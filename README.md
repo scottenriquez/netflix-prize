@@ -1,2 +1,2 @@
-cs373-netflix
+netflix-prize
 =============
