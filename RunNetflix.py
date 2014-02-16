@@ -18,9 +18,9 @@ userRatingCache = [2.5] * 2649430
 movieRatingCache = [2.5] * 17771
 actualRatings = [None] * 17771
 #paths to clone of the public repo
-netflix_make_cache(userRatingCache, open("/u/lara/cs373-netflix-tests/ghawk88-users_average_rating.txt", "r"))
-netflix_make_cache(movieRatingCache, open("/u/lara/cs373-netflix-tests/cmlinac-movies_average_rating.txt", "r"))
-actualRatings = netflix_read_actual(actualRatings, open("/u/lara/cs373-netflix-tests/ashorn49-bbell-user_and_rating.txt", "r"))
+netflix_make_cache(userRatingCache, open("caches/AverageUserRatings.txt", "r"))
+netflix_make_cache(movieRatingCache, open("caches/AverageMovieRatings.txt", "r"))
+actualRatings = netflix_read_actual(actualRatings, open("caches/ActualUserRatings.txt", "r"))
 #read probe from system in
 probeLines = netflix_read_probe(sys.stdin)
 #compute RMSE
